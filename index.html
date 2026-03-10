@@ -6,7 +6,17 @@
     <title>Hema ❤️ Surender | Wedding Reception</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Josefin+Sans:wght@300;400&family=Cinzel:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Josefin+Sans:wght@300;400&family=Cinzel:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Josefin+Sans:wght@300;400&family=Cinzel:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
+    <style>
+        /* Critical CSS - Load immediately to prevent FOIT */
+        body {
+            font-family: Georgia, serif;
+            background: #0d0d1a;
+            color: #faf7f0;
+            margin: 0;
+        }
+    </style>
     <style>
         *, *::before, *::after {
             margin: 0;
@@ -40,6 +50,7 @@
             color: var(--cream);
             overflow-x: hidden;
             cursor: default;
+            font-display: swap;
         }
 
         /* ===== HIDE SCROLLBAR ===== */
@@ -76,12 +87,13 @@
             align-items: center;
             justify-content: center;
             z-index: 9999;
-            transition: opacity 1s ease, visibility 1s ease;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
         }
 
         .preloader.hidden {
             opacity: 0;
             visibility: hidden;
+            pointer-events: none;
         }
 
         .preloader-rings {
@@ -841,69 +853,117 @@
         }
 
         .event-timeline {
-            max-width: 500px;
+            max-width: 600px;
             margin: 0 auto;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
         }
 
         .event-timeline::before {
-            content: '';
-            position: absolute;
-            left: 50%;
-            top: 0; bottom: 0;
-            width: 1px;
-            background: linear-gradient(180deg, transparent, var(--gold-dark), var(--gold), var(--gold-dark), transparent);
-            transform: translateX(-50%);
+            display: none;
         }
 
         .timeline-event {
+            background: rgba(201, 168, 76, 0.04);
+            border: 1px solid rgba(201, 168, 76, 0.12);
+            border-radius: 16px;
+            padding: 1.8rem 2rem;
             display: flex;
+            flex-direction: row;
             align-items: center;
             gap: 1.5rem;
-            padding: 1.5rem 0;
+            text-align: left;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
             position: relative;
+            overflow: hidden;
+        }
+
+        .timeline-event::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(201, 168, 76, 0.3), transparent);
+        }
+
+        .timeline-event:hover {
+            background: rgba(201, 168, 76, 0.08);
+            border-color: rgba(201, 168, 76, 0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(201, 168, 76, 0.2);
         }
 
         .timeline-event:nth-child(odd) {
-            flex-direction: row-reverse;
-            text-align: right;
+            flex-direction: row;
+            text-align: left;
         }
 
         .timeline-event .event-dot {
-            width: 12px;
-            height: 12px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             border: 2px solid var(--gold);
-            background: var(--dark);
+            background: linear-gradient(135deg, var(--dark-soft), var(--dark-card));
             flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             position: relative;
             z-index: 2;
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
 
+        .timeline-event .event-dot::after {
+            content: '⏰';
+            font-size: 1.5rem;
+            position: absolute;
+            transition: transform 0.3s ease;
+        }
+
+        .timeline-event:nth-child(2) .event-dot::after { content: '💒'; }
+        .timeline-event:nth-child(3) .event-dot::after { content: '🍽️'; }
+
         .timeline-event:hover .event-dot {
-            background: var(--gold);
-            box-shadow: 0 0 15px rgba(201, 168, 76, 0.5);
+            background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+            border-color: var(--gold-bright);
+            box-shadow: 0 0 25px rgba(201, 168, 76, 0.6);
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .timeline-event:hover .event-dot::after {
+            transform: scale(1.2);
         }
 
         .timeline-event .event-content {
             flex: 1;
         }
 
+        .timeline-event .event-content:last-child {
+            display: none;
+        }
+
         .timeline-event .event-time {
             font-family: 'Josefin Sans', sans-serif;
-            font-size: 0.75rem;
-            letter-spacing: 0.25em;
+            font-size: 0.8rem;
+            letter-spacing: 0.3em;
             color: var(--gold);
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.5rem;
             font-weight: 400;
+            text-transform: uppercase;
         }
 
         .timeline-event .event-name {
             font-family: 'Playfair Display', serif;
-            font-size: 1.2rem;
-            font-weight: 500;
+            font-size: 1.35rem;
+            font-weight: 600;
             color: var(--cream);
+            line-height: 1.4;
         }
 
         /* ===== RSVP / MESSAGE SECTION ===== */
@@ -1081,44 +1141,52 @@
             opacity: 0;
             transform: translateY(40px);
             transition: all 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: opacity, transform;
         }
 
         .reveal.active {
             opacity: 1;
             transform: translateY(0);
+            will-change: auto;
         }
 
         .reveal-left {
             opacity: 0;
             transform: translateX(-50px);
             transition: all 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: opacity, transform;
         }
 
         .reveal-left.active {
             opacity: 1;
             transform: translateX(0);
+            will-change: auto;
         }
 
         .reveal-right {
             opacity: 0;
             transform: translateX(50px);
             transition: all 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: opacity, transform;
         }
 
         .reveal-right.active {
             opacity: 1;
             transform: translateX(0);
+            will-change: auto;
         }
 
         .reveal-scale {
             opacity: 0;
             transform: scale(0.9);
             transition: all 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: opacity, transform;
         }
 
         .reveal-scale.active {
             opacity: 1;
             transform: scale(1);
+            will-change: auto;
         }
 
         /* Staggered children animations */
@@ -1168,79 +1236,34 @@
             .nav-dots { display: none; }
             .glass-card { padding: 2rem 1.5rem; }
 
-            /* Mobile Timeline Redesign */
+            /* Mobile Timeline Adjustments */
             .event-timeline {
                 max-width: 100%;
-                display: flex;
-                flex-direction: column;
                 gap: 1rem;
             }
-
-            .event-timeline::before { display: none; }
 
             .timeline-event {
-                background: rgba(201, 168, 76, 0.04);
-                border: 1px solid rgba(201, 168, 76, 0.12);
+                padding: 1.3rem 1.2rem;
                 border-radius: 12px;
-                padding: 1.5rem;
-                display: flex;
-                flex-direction: row;
-                align-items: center;
                 gap: 1rem;
-                text-align: left;
-                backdrop-filter: blur(10px);
-                transition: all 0.3s ease;
-            }
-
-            .timeline-event:hover {
-                background: rgba(201, 168, 76, 0.08);
-                border-color: rgba(201, 168, 76, 0.25);
-                transform: translateY(-2px);
-                box-shadow: 0 8px 20px rgba(201, 168, 76, 0.15);
-            }
-
-            .timeline-event:nth-child(odd) {
-                flex-direction: row;
-                text-align: left;
             }
 
             .timeline-event .event-dot {
-                width: 40px;
-                height: 40px;
-                border-width: 2px;
-                flex-shrink: 0;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: var(--dark-soft);
-                position: relative;
+                width: 42px;
+                height: 42px;
             }
 
             .timeline-event .event-dot::after {
-                content: '⏰';
                 font-size: 1.2rem;
-                position: absolute;
-            }
-
-            .timeline-event:nth-child(2) .event-dot::after { content: '💒'; }
-            .timeline-event:nth-child(3) .event-dot::after { content: '🍽️'; }
-
-            .timeline-event .event-content:last-child {
-                display: none;
-            }
-
-            .timeline-event .event-content:first-child {
-                flex: 1;
             }
 
             .timeline-event .event-time {
-                font-size: 0.85rem;
-                margin-bottom: 0.4rem;
+                font-size: 0.75rem;
+                letter-spacing: 0.2em;
             }
 
             .timeline-event .event-name {
-                font-size: 1.1rem;
-                line-height: 1.3;
+                font-size: 1.05rem;
             }
         }
 
@@ -1859,27 +1882,57 @@
 
 
     <script>
-        // ===== PRELOADER =====
+        // ===== FASTER PRELOADER WITH IMMEDIATE START =====
+        // Start hiding preloader as soon as DOM is ready, don't wait for all resources
+        document.addEventListener('DOMContentLoaded', () => {
+            // Apply a minimum display time for smooth transition
+            const minDisplayTime = 800;
+            const startTime = performance.now();
+
+            const hidePreloader = () => {
+                const elapsed = performance.now() - startTime;
+                const remainingTime = Math.max(0, minDisplayTime - elapsed);
+
+                setTimeout(() => {
+                    document.getElementById('preloader').classList.add('hidden');
+                    // Fire celebration poppers after preloader hides
+                    setTimeout(launchPoppers, 400);
+                    // Auto-play music with user interaction fallback
+                    setTimeout(function() {
+                        const music = document.getElementById('bgMusic');
+                        if (music) {
+                            music.volume = 0.3; // Set light/soft volume (30%)
+                            const playPromise = music.play();
+                            if (playPromise !== undefined) {
+                                playPromise.then(function() {
+                                    document.getElementById('musicToggle').classList.add('playing');
+                                }).catch(function(error) {
+                                    // Autoplay was prevented, music will start on first user interaction
+                                    console.log('Autoplay prevented. Click anywhere to start music.');
+                                });
+                            }
+                        }
+                    }, 500);
+                }, remainingTime);
+            };
+
+            // If fonts and critical resources load quickly, hide immediately
+            // Otherwise wait for full page load with a max timeout
+            if (document.fonts && document.fonts.ready) {
+                document.fonts.ready.then(hidePreloader);
+            } else {
+                hidePreloader();
+            }
+        });
+
+        // Fallback: ensure preloader hides even if something goes wrong
         window.addEventListener('load', () => {
             setTimeout(() => {
-                document.getElementById('preloader').classList.add('hidden');
-                // Fire celebration poppers after preloader hides
-                setTimeout(launchPoppers, 600);
-                // Auto-play music with user interaction fallback
-                setTimeout(function() {
-                    const music = document.getElementById('bgMusic');
-                    music.volume = 0.3; // Set light/soft volume (30%)
-                    const playPromise = music.play();
-                    if (playPromise !== undefined) {
-                        playPromise.then(function() {
-                            document.getElementById('musicToggle').classList.add('playing');
-                        }).catch(function(error) {
-                            // Autoplay was prevented, music will start on first user interaction
-                            console.log('Autoplay prevented. Click anywhere to start music.');
-                        });
-                    }
-                }, 800);
-            }, 2000);
+                const preloader = document.getElementById('preloader');
+                if (preloader && !preloader.classList.contains('hidden')) {
+                    preloader.classList.add('hidden');
+                }
+            }, 100);
         });
 
         // ===== CELEBRATION POPPER =====
@@ -1925,8 +1978,8 @@
             setTimeout(function() { overlay.remove(); }, 4000);
         }
 
-        // ===== SPARKLE CURSOR =====
-        (function sparkleCursor() {
+        // ===== SPARKLE CURSOR (Optimized with throttling) =====
+        const initSparkleCursor = () => {
             let lastX = 0, lastY = 0;
             const colors = ['#c9a84c', '#e8d5a3', '#d4a0a0', '#f0c64d'];
             document.addEventListener('mousemove', (e) => {
@@ -1946,12 +1999,13 @@
                 sparkle.style.background = colors[Math.floor(Math.random() * colors.length)];
                 document.body.appendChild(sparkle);
                 setTimeout(() => sparkle.remove(), 600);
-            });
-        })();
+            }, { passive: true });
+        };
 
-        // ===== PARTICLES (mixed shapes) =====
-        (function createParticles() {
+        // ===== PARTICLES (mixed shapes) - Deferred initialization =====
+        const createParticles = () => {
             const container = document.getElementById('particles');
+            if (!container) return;
             const count = 40;
             const shapes = ['circle', 'star', 'diamond'];
             for (let i = 0; i < count; i++) {
@@ -1972,7 +2026,21 @@
                 p.style.opacity = 0;
                 container.appendChild(p);
             }
-        })();
+        };
+
+        // Initialize decorative effects after page is fully interactive
+        // Use requestIdleCallback for better performance, or setTimeout as fallback
+        if ('requestIdleCallback' in window) {
+            requestIdleCallback(() => {
+                initSparkleCursor();
+                createParticles();
+            }, { timeout: 2000 });
+        } else {
+            setTimeout(() => {
+                initSparkleCursor();
+                createParticles();
+            }, 1000);
+        }
 
         // ===== COUNTDOWN =====
         (function countdown() {
@@ -2171,26 +2239,32 @@
         })();
 
         // ===== SCROLL REVEAL WITH INTERSECTION OBSERVER =====
-        const revealSelectors = '.reveal, .reveal-left, .reveal-right, .reveal-scale, .stagger-children';
-        const revealElements = document.querySelectorAll(revealSelectors);
+        // Initialize immediately for better perceived performance
+        (function initScrollReveal() {
+            const revealSelectors = '.reveal, .reveal-left, .reveal-right, .reveal-scale, .stagger-children';
+            const revealElements = document.querySelectorAll(revealSelectors);
 
-        const revealObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
-                    // Optional: unobserve after revealing (one-time animation)
-                    // revealObserver.unobserve(entry.target);
-                }
+            // Early return if no elements to observe
+            if (revealElements.length === 0) return;
+
+            const revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        // Optional: unobserve after revealing for better performance
+                        // revealObserver.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -30px 0px'
             });
-        }, {
-            threshold: 0.15,
-            rootMargin: '0px 0px -50px 0px'
-        });
 
-        revealElements.forEach(el => {
-            revealObserver.observe(el);
-        });
-
+            // Observe all elements
+            revealElements.forEach(el => {
+                revealObserver.observe(el);
+            });
+        })();
         // ===== SMOOTH SCROLL PARALLAX EFFECT =====
         let ticking = false;
         let scrollPos = 0;
