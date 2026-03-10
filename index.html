@@ -320,13 +320,7 @@
                 radial-gradient(ellipse at 20% 50%, rgba(201, 168, 76, 0.07) 0%, transparent 50%),
                 radial-gradient(ellipse at 80% 50%, rgba(212, 160, 160, 0.07) 0%, transparent 50%),
                 radial-gradient(ellipse at 50% 0%, rgba(201, 168, 76, 0.04) 0%, transparent 60%);
-            animation: bgShift 20s ease-in-out infinite alternate;
-        }
-
-        @keyframes bgShift {
-            0% { filter: hue-rotate(0deg) brightness(1); }
-            50% { filter: hue-rotate(5deg) brightness(1.05); }
-            100% { filter: hue-rotate(-5deg) brightness(1); }
+            will-change: transform;
         }
 
         .hero::before {
@@ -339,12 +333,6 @@
             background:
                 radial-gradient(circle at 30% 40%, rgba(201, 168, 76, 0.03) 0%, transparent 40%),
                 radial-gradient(circle at 70% 60%, rgba(212, 160, 160, 0.03) 0%, transparent 40%);
-            animation: slowRotate 60s linear infinite;
-        }
-
-        @keyframes slowRotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
         }
 
         .hero-content {
@@ -1272,42 +1260,38 @@
             position: absolute;
             border: 1px solid rgba(201, 168, 76, 0.05);
             border-radius: 50%;
-            animation: mandalaRotate 80s linear infinite;
+            will-change: transform;
         }
 
         .mandala-ring:nth-child(1) {
             width: 400px; height: 400px;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
+            display: none;
         }
 
         .mandala-ring:nth-child(2) {
             width: 520px; height: 520px;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            animation-direction: reverse;
             border-style: dashed;
+            display: none;
         }
 
         .mandala-ring:nth-child(3) {
             width: 650px; height: 650px;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            animation-duration: 120s;
+            display: none;
         }
 
         .mandala-ring:nth-child(4) {
             width: 300px; height: 300px;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            animation-duration: 40s;
             border-style: dotted;
             border-color: rgba(212, 160, 160, 0.04);
-        }
-
-        @keyframes mandalaRotate {
-            from { transform: translate(-50%, -50%) rotate(0deg); }
-            to { transform: translate(-50%, -50%) rotate(360deg); }
+            display: none;
         }
 
         /* ===== GLOWING ORB ===== */
@@ -1323,28 +1307,21 @@
             width: 350px; height: 350px;
             background: rgba(201, 168, 76, 0.07);
             top: 15%; left: -8%;
-            animation: orbFloat 12s ease-in-out infinite;
+            will-change: transform;
         }
 
         .glow-orb-2 {
             width: 280px; height: 280px;
             background: rgba(212, 160, 160, 0.07);
             bottom: 15%; right: -8%;
-            animation: orbFloat 14s ease-in-out infinite reverse;
+            will-change: transform;
         }
 
         .glow-orb-3 {
             width: 200px; height: 200px;
             background: rgba(107, 45, 62, 0.05);
             top: 60%; left: 60%;
-            animation: orbFloat 18s ease-in-out 2s infinite;
-        }
-
-        @keyframes orbFloat {
-            0%, 100% { transform: translate(0, 0); }
-            25% { transform: translate(20px, -30px); }
-            50% { transform: translate(-10px, 20px); }
-            75% { transform: translate(30px, 10px); }
+            will-change: transform;
         }
 
         /* ===== PARALLAX LAYER ===== */
@@ -2030,15 +2007,16 @@
 
         // Initialize decorative effects after page is fully interactive
         // Use requestIdleCallback for better performance, or setTimeout as fallback
+        // DISABLED FOR BETTER SCROLL PERFORMANCE
         if ('requestIdleCallback' in window) {
             requestIdleCallback(() => {
-                initSparkleCursor();
-                createParticles();
+                // initSparkleCursor(); // DISABLED
+                // createParticles(); // DISABLED
             }, { timeout: 2000 });
         } else {
             setTimeout(() => {
-                initSparkleCursor();
-                createParticles();
+                // initSparkleCursor(); // DISABLED
+                // createParticles(); // DISABLED
             }, 1000);
         }
 
@@ -2265,7 +2243,7 @@
                 revealObserver.observe(el);
             });
         })();
-        // ===== SMOOTH SCROLL PARALLAX EFFECT =====
+        // ===== SMOOTH SCROLL PARALLAX EFFECT - OPTIMIZED FOR PERFORMANCE =====
         let ticking = false;
         let scrollPos = 0;
 
@@ -2274,31 +2252,21 @@
 
             if (!ticking) {
                 window.requestAnimationFrame(() => {
-                    // Parallax effect on hero background
+                    // Only apply parallax to hero background
                     const hero = document.querySelector('.hero-bg');
                     if (hero) {
-                        hero.style.transform = `translateY(${scrollPos * 0.5}px)`;
+                        hero.style.transform = `translateY(${scrollPos * 0.15}px)`; // Reduced from 0.5 to 0.15
                     }
 
-                    // Subtle parallax on glow orbs
-                    const orbs = document.querySelectorAll('.glow-orb');
-                    orbs.forEach((orb, index) => {
-                        const speed = 0.3 + (index * 0.1);
-                        orb.style.transform = `translateY(${scrollPos * speed}px)`;
-                    });
-
-                    // Parallax on floating particles
-                    const particles = document.querySelector('.particles-container');
-                    if (particles) {
-                        particles.style.transform = `translateY(${scrollPos * 0.2}px)`;
-                    }
+                    // Disabled glow orbs parallax for better performance
+                    // Disabled particles parallax for better performance
 
                     ticking = false;
                 });
 
                 ticking = true;
             }
-        });
+        }, { passive: true });
 
         // ===== PARALLAX ON MOUSE MOVE =====
         (function parallax() {
@@ -2365,7 +2333,7 @@
             }, { once: false });
         })();
 
-        // ===== FLOATING HEARTS (decorative, in hero) =====
+        // ===== FLOATING HEARTS (decorative, in hero) - REDUCED FREQUENCY FOR PERFORMANCE =====
         (function floatingHearts() {
             const hero = document.querySelector('.hero');
             if (!hero) return;
@@ -2379,7 +2347,7 @@
                 heart.style.animationDuration = (8 + Math.random() * 6) + 's';
                 hero.appendChild(heart);
                 setTimeout(() => heart.remove(), 14000);
-            }, 3000);
+            }, 6000); // Increased from 3000 to 6000ms for better performance
         })();
     </script>
 
