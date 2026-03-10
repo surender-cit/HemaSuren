@@ -1558,15 +1558,23 @@
 
         /* ===== MOBILE PERFORMANCE OPTIMIZATIONS ===== */
         @media (max-width: 768px) {
-            /* Disable smooth scroll transitions on mobile */
-            * {
-                animation-duration: 0.3s !important;
-                transition-duration: 0.2s !important;
+            /* Specifically target only heavy animations, not all */
+            .reception-badge::before,
+            .map-button::after {
+                animation: none !important;
             }
 
-            /* Reduce heartbeat animation on mobile */
+            /* Keep preloader animations smooth */
             .preloader-heart {
-                animation: heartbeat 1.5s ease-in-out infinite !important;
+                animation: heartbeat 1s ease-in-out infinite !important;
+            }
+
+            .preloader-text {
+                animation: fadeInUp 0.8s ease 0.3s forwards !important;
+            }
+
+            .preloader-rings .ring:nth-child(1) {
+                animation: spinRing 1.5s linear infinite !important;
             }
 
             /* Disable shimmer effects on cards */
@@ -1931,7 +1939,7 @@
         <div class="couple-monogram">H ♥ S</div>
         <div class="hashtag">#HemaWedsSurender</div>
         <div class="footer-text">We can't wait to celebrate with you!</div>
-        <div class="made-with">Made with (10 March, 2026 12:16:53) <span>♥</span></div>
+        <div class="made-with">Made with (10 March, 2026 12:29:05) <span>♥</span></div>
     </footer>
 
 
