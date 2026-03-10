@@ -41,7 +41,7 @@
         }
 
         html {
-            scroll-behavior: smooth;
+            scroll-behavior: auto;
         }
 
         body {
@@ -127,6 +127,18 @@
             top: 30px; left: 30px;
             border-bottom-color: var(--gold-light);
             animation: spinRing 0.8s linear infinite;
+        }
+
+        /* Hide ring 2 and 3 on mobile for performance */
+        @media (max-width: 640px) {
+            .preloader-rings .ring:nth-child(2),
+            .preloader-rings .ring:nth-child(3) {
+                display: none;
+            }
+
+            .preloader-rings .ring:nth-child(1) {
+                animation: spinRing 1.5s linear infinite; /* Slower on mobile */
+            }
         }
 
         .preloader-heart {
@@ -1543,6 +1555,71 @@
             50% { opacity: 1; transform: scale(1) rotate(0deg) translateY(30px); }
             100% { opacity: 0; transform: scale(0.6) translateY(80px); }
         }
+
+        /* ===== MOBILE PERFORMANCE OPTIMIZATIONS ===== */
+        @media (max-width: 768px) {
+            /* Disable smooth scroll transitions on mobile */
+            * {
+                animation-duration: 0.3s !important;
+                transition-duration: 0.2s !important;
+            }
+
+            /* Reduce heartbeat animation on mobile */
+            .preloader-heart {
+                animation: heartbeat 1.5s ease-in-out infinite !important;
+            }
+
+            /* Disable shimmer effects on cards */
+            .message-card .shimmer-overlay,
+            .map-button::after {
+                display: none !important;
+            }
+
+            /* Simplify gradients on mobile */
+            .couple-names .name {
+                background: none !important;
+                -webkit-text-fill-color: var(--gold) !important;
+                color: var(--gold) !important;
+                filter: none !important;
+            }
+
+            /* Disable box shadows for performance */
+            .music-toggle,
+            .map-button,
+            .message-card,
+            .timeline-event {
+                box-shadow: none !important;
+                filter: none !important;
+            }
+
+            /* Reduce blur effects */
+            .music-toggle {
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+            }
+
+            /* Disable complex animations */
+            .reception-badge::before,
+            .map-button::after,
+            .card-shimmer {
+                display: none !important;
+            }
+
+            /* Simplify icon animations */
+            .section-divider .icon {
+                animation: none !important;
+            }
+
+            /* Disable parallax transforms */
+            .hero::before {
+                display: none !important;
+            }
+
+            /* Reduce glow effects */
+            .glow-orb {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1854,7 +1931,7 @@
         <div class="couple-monogram">H ♥ S</div>
         <div class="hashtag">#HemaWedsSurender</div>
         <div class="footer-text">We can't wait to celebrate with you!</div>
-        <div class="made-with">Made with <span>♥</span></div>
+        <div class="made-with">Made with (10 March, 2026 12:16:53) <span>♥</span></div>
     </footer>
 
 
@@ -1862,8 +1939,11 @@
         // ===== FASTER PRELOADER WITH IMMEDIATE START =====
         // Start hiding preloader as soon as DOM is ready, don't wait for all resources
         document.addEventListener('DOMContentLoaded', () => {
-            // Apply a minimum display time for smooth transition
-            const minDisplayTime = 800;
+            // Detect mobile for faster preloader hide
+            const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+            // Reduced display time on mobile (500ms) vs desktop (800ms)
+            const minDisplayTime = isMobileDevice ? 500 : 800;
             const startTime = performance.now();
 
             const hidePreloader = () => {
@@ -1873,7 +1953,7 @@
                 setTimeout(() => {
                     document.getElementById('preloader').classList.add('hidden');
                     // Fire celebration poppers after preloader hides
-                    setTimeout(launchPoppers, 400);
+                    setTimeout(launchPoppers, 300); // Reduced from 400 to 300ms
                     // Auto-play music with user interaction fallback
                     setTimeout(function() {
                         const music = document.getElementById('bgMusic');
@@ -1889,7 +1969,7 @@
                                 });
                             }
                         }
-                    }, 500);
+                    }, 400);
                 }, remainingTime);
             };
 
@@ -1912,8 +1992,16 @@
             }, 100);
         });
 
-        // ===== CELEBRATION POPPER =====
+        // ===== CELEBRATION POPPER - OPTIMIZED FOR MOBILE =====
         function launchPoppers() {
+            // Detect mobile
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+            if (isMobile) {
+                // Skip popper animation on mobile for better performance
+                return;
+            }
+
             const overlay = document.createElement('div');
             overlay.classList.add('popper-overlay');
             document.body.appendChild(overlay);
@@ -1921,8 +2009,8 @@
             const colors = ['#c9a84c', '#e8d5a3', '#f0c64d', '#d4a0a0', '#f0d5d5', '#ff6b8a', '#ffd700', '#ffffff', '#6b2d3e'];
             const shapes = ['rect', 'circle', 'star'];
 
-            // Rain confetti pieces from the top
-            var pieceCount = 100;
+            // Significantly reduced piece count from 100 to 40
+            var pieceCount = 40;
             for (var i = 0; i < pieceCount; i++) {
                 var piece = document.createElement('div');
                 var shape = shapes[Math.floor(Math.random() * shapes.length)];
@@ -2040,27 +2128,35 @@
                 // Add celebrating class to section
                 document.querySelector('.date-section').classList.add('celebrating');
 
+                // Detect mobile
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+                // Skip heavy celebration animations on mobile
+                if (isMobile) {
+                    return;
+                }
+
                 // Create celebration overlay
                 const overlay = document.createElement('div');
                 overlay.classList.add('celebration-overlay');
                 overlay.id = 'celebOverlay';
                 document.body.appendChild(overlay);
 
-                // Launch initial big burst
-                launchConfetti(overlay, 80);
-                launchFireworks(overlay, 4);
+                // Launch initial big burst - reduced from 80 to 50 on desktop
+                launchConfetti(overlay, 50);
+                launchFireworks(overlay, 3);
 
-                // Sustained celebration waves for 15 seconds
-                const confettiInterval = setInterval(() => launchConfetti(overlay, 40), 2000);
-                const fireworkInterval = setInterval(() => launchFireworks(overlay, 3), 1800);
+                // Sustained celebration waves for 10 seconds (reduced from 15)
+                const confettiInterval = setInterval(() => launchConfetti(overlay, 25), 2500); // Reduced from 40 every 2000ms
+                const fireworkInterval = setInterval(() => launchFireworks(overlay, 2), 2000); // Reduced from 3 every 1800ms
                 setTimeout(() => {
                     clearInterval(confettiInterval);
                     clearInterval(fireworkInterval);
-                }, 15000);
+                }, 10000);
             }
 
             function launchConfetti(container, count) {
-                count = count || 60;
+                count = count || 40; // Reduced default from 60 to 40
                 const colors = ['#c9a84c', '#e8d5a3', '#f0c64d', '#d4a0a0', '#f0d5d5', '#6b2d3e', '#ffffff', '#ff6b8a', '#ffd700'];
                 const shapes = ['rect', 'circle', 'star'];
                 for (let i = 0; i < count; i++) {
@@ -2071,28 +2167,28 @@
                     conf.style.background = colors[Math.floor(Math.random() * colors.length)];
                     conf.style.width = (6 + Math.random() * 10) + 'px';
                     conf.style.height = (6 + Math.random() * 10) + 'px';
-                    conf.style.animationDuration = (2 + Math.random() * 3) + 's';
-                    conf.style.animationDelay = (Math.random() * 2) + 's';
+                    conf.style.animationDuration = (2 + Math.random() * 2) + 's'; // Reduced from 3s max to 2s max
+                    conf.style.animationDelay = (Math.random() * 0.5) + 's'; // Reduced delay variation
                     if (shape === 'star') {
                         conf.textContent = ['✦', '★', '✨', '⭐'][Math.floor(Math.random() * 4)];
                         conf.style.color = colors[Math.floor(Math.random() * colors.length)];
                     }
                     container.appendChild(conf);
-                    setTimeout(() => conf.remove(), 6000);
+                    setTimeout(() => conf.remove(), 4500); // Reduced from 6000ms
                 }
             }
 
             function launchFireworks(container, burstCount) {
                 const colors = ['#c9a84c', '#f0c64d', '#d4a0a0', '#ff6b8a', '#ffd700', '#e8d5a3', '#ffffff'];
-                const bursts = burstCount || (3 + Math.floor(Math.random() * 3));
+                const bursts = burstCount || (2 + Math.floor(Math.random() * 2)); // Reduced max bursts from 6 to 4
                 for (let b = 0; b < bursts; b++) {
-                    const cx = 10 + Math.random() * 80; // % from left
-                    const cy = 10 + Math.random() * 50; // % from top
+                    const cx = 10 + Math.random() * 80;
+                    const cy = 10 + Math.random() * 50;
                     const color = colors[Math.floor(Math.random() * colors.length)];
-                    const delay = Math.random() * 1500;
+                    const delay = Math.random() * 500; // Reduced from 1500ms
 
                     setTimeout(() => {
-                        const numTrails = 20 + Math.floor(Math.random() * 15);
+                        const numTrails = 12 + Math.floor(Math.random() * 8); // Reduced from 20-35 to 12-20
                         for (let t = 0; t < numTrails; t++) {
                             const trail = document.createElement('div');
                             trail.classList.add('firework-trail');
@@ -2101,7 +2197,7 @@
                             trail.style.background = color;
                             trail.style.boxShadow = '0 0 6px ' + color;
                             const angle = (Math.PI * 2 / numTrails) * t;
-                            const dist = 40 + Math.random() * 80;
+                            const dist = 40 + Math.random() * 60; // Reduced from 80
                             trail.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
                             trail.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
                             trail.style.animationDuration = (0.6 + Math.random() * 0.6) + 's';
@@ -2243,23 +2339,24 @@
                 revealObserver.observe(el);
             });
         })();
-        // ===== SMOOTH SCROLL PARALLAX EFFECT - OPTIMIZED FOR PERFORMANCE =====
+        // ===== SMOOTH SCROLL PARALLAX EFFECT - DISABLED ON MOBILE FOR PERFORMANCE =====
         let ticking = false;
         let scrollPos = 0;
+        const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
         window.addEventListener('scroll', () => {
             scrollPos = window.pageYOffset;
+
+            // Disable parallax on mobile for better scroll performance
+            if (isMobileDevice) return;
 
             if (!ticking) {
                 window.requestAnimationFrame(() => {
                     // Only apply parallax to hero background
                     const hero = document.querySelector('.hero-bg');
                     if (hero) {
-                        hero.style.transform = `translateY(${scrollPos * 0.15}px)`; // Reduced from 0.5 to 0.15
+                        hero.style.transform = `translateY(${scrollPos * 0.15}px)`;
                     }
-
-                    // Disabled glow orbs parallax for better performance
-                    // Disabled particles parallax for better performance
 
                     ticking = false;
                 });
@@ -2268,8 +2365,11 @@
             }
         }, { passive: true });
 
-        // ===== PARALLAX ON MOUSE MOVE =====
+        // ===== PARALLAX ON MOUSE MOVE - DISABLED ON MOBILE =====
         (function parallax() {
+            // Skip on mobile devices
+            if (isMobileDevice) return;
+
             const layer = document.getElementById('parallaxHero');
             if (!layer) return;
             document.addEventListener('mousemove', (e) => {
@@ -2334,7 +2434,11 @@
         })();
 
         // ===== FLOATING HEARTS (decorative, in hero) - REDUCED FREQUENCY FOR PERFORMANCE =====
+        // ===== FLOATING HEARTS - DISABLED ON MOBILE FOR PERFORMANCE =====
         (function floatingHearts() {
+            // Skip on mobile devices for better performance
+            if (isMobileDevice) return;
+
             const hero = document.querySelector('.hero');
             if (!hero) return;
             setInterval(() => {
@@ -2347,7 +2451,7 @@
                 heart.style.animationDuration = (8 + Math.random() * 6) + 's';
                 hero.appendChild(heart);
                 setTimeout(() => heart.remove(), 14000);
-            }, 6000); // Increased from 3000 to 6000ms for better performance
+            }, 6000);
         })();
     </script>
 
